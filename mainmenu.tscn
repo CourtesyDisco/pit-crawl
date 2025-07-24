@@ -1,0 +1,54 @@
+[gd_scene load_steps=4 format=3 uid="uid://by5cmu7m3n3p8"]
+
+[ext_resource type="Texture2D" uid="uid://bvvv3e0pesx56" path="res://scary-endless-medieval-catacombs-torches-600nw-1940646100.webp" id="1_d2nv2"]
+[ext_resource type="Script" uid="uid://by5i5c814ff4h" path="res://mainmenu.gd" id="1_wgsso"]
+[ext_resource type="Texture2D" uid="uid://c0q0tu7mlwnj1" path="res://Heavy Textured Logo - Pit Crawl (1).png" id="2_wgsso"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wgsso")
+
+[node name="BG" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -59.0
+offset_top = -10.0
+offset_right = 1239.0
+offset_bottom = 869.0
+texture = ExtResource("1_d2nv2")
+
+[node name="Logo" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 259.0
+offset_top = 12.0
+offset_right = 942.0
+offset_bottom = 527.0
+texture = ExtResource("2_wgsso")
+expand_mode = 1
+
+[node name="Menu" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 498.0
+offset_top = 480.0
+offset_right = 682.0
+offset_bottom = 717.0
+
+[node name="StartGame" type="Button" parent="Menu"]
+layout_mode = 2
+text = "Start"
+
+[node name="Options" type="Button" parent="Menu"]
+layout_mode = 2
+text = "Options"
+
+[node name="Quit" type="Button" parent="Menu"]
+layout_mode = 2
+text = "Quit"
+
+[connection signal="pressed" from="Menu/StartGame" to="." method="_on_start_game_pressed"]
+[connection signal="pressed" from="Menu/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="Menu/Quit" to="." method="_on_quit_pressed"]

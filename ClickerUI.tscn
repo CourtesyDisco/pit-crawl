@@ -1,0 +1,195 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwtleeytr5pu6"]
+
+[ext_resource type="Script" uid="uid://bw5oru27cunpv" path="res://ClickerUI.gd" id="1_l57o1"]
+[ext_resource type="Texture2D" uid="uid://bg4ttg5668dwr" path="res://—Pngtree—throne sits in the center_15784250.jpg" id="2_2fysx"]
+
+[node name="ClickerUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1153.0
+offset_bottom = 651.0
+script = ExtResource("1_l57o1")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.490196, 0, 0, 0.501961)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -455.0
+offset_top = -215.0
+offset_right = 454.0
+offset_bottom = 163.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_2fysx")
+expand_mode = 1
+
+[node name="GetAuthorityButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -75.0
+offset_top = -255.5
+offset_right = 75.0
+offset_bottom = -180.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Enforce Will"
+
+[node name="Upgrades" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -215.5
+offset_top = -167.5
+offset_right = 215.5
+offset_bottom = 167.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Upgrade1" type="Button" parent="Upgrades"]
+layout_mode = 2
+text = "Tighten Grip
+(Cost: 10 Authority)"
+
+[node name="UpgradePassive" type="Button" parent="Upgrades"]
+layout_mode = 2
+text = "Higher Enforcers
+(Cost: 50 Authority)"
+
+[node name="Upgrade2" type="Button" parent="Upgrades"]
+visible = false
+layout_mode = 2
+text = "Imperial Effigy
+(Cost 100 Authority)"
+
+[node name="UpgradeCC" type="Button" parent="Upgrades"]
+visible = false
+layout_mode = 2
+
+[node name="UpgradeCM" type="Button" parent="Upgrades"]
+visible = false
+layout_mode = 2
+
+[node name="AuthorityLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -192.5
+offset_right = 168.5
+offset_bottom = 30.0
+grow_horizontal = 2
+text = "Absolute Authority: 0"
+horizontal_alignment = 1
+
+[node name="PassiveLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -104.0
+offset_bottom = 79.0
+grow_horizontal = 0
+text = "Passive Authority: +0/s"
+horizontal_alignment = 1
+
+[node name="PassiveTimer" type="Timer" parent="."]
+autostart = true
+
+[node name="PassiveBar" type="ProgressBar" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 493.5
+offset_top = -576.0
+offset_right = 551.5
+offset_bottom = -533.0
+grow_horizontal = 2
+grow_vertical = 0
+max_value = 1.0
+show_percentage = false
+
+[node name="BackButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+offset_right = 114.0
+grow_vertical = 0
+text = "Back to Menu
+"
+
+[node name="RumourLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -242.5
+offset_top = -36.0
+offset_right = 242.5
+grow_horizontal = 2
+grow_vertical = 0
+bbcode_enabled = true
+scroll_active = false
+horizontal_alignment = 1
+
+[node name="RumourTimer" type="Timer" parent="."]
+wait_time = 7.0
+
+[node name="TypewriterTimer" type="Timer" parent="."]
+wait_time = 0.065
+
+[node name="PrestigeButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -29.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Abdicate"
+
+[node name="PrestigeConfirm" type="ConfirmationDialog" parent="."]
+auto_translate_mode = 1
+ok_button_text = "Yes, it's time to move on."
+dialog_text = "Abdicating allows your heir to inherit your kingdom. They will have to start from the beginning, but hopefully your influence will live on to help."
+cancel_button_text = "No, I'm not ready."
+
+[node name="BloodlineLabel" type="RichTextLabel" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 874.0
+offset_top = 623.0
+offset_right = 1025.0
+offset_bottom = 648.0
+text = "Bloodline Strength: 0"
+
+[connection signal="pressed" from="GetAuthorityButton" to="." method="_on_get_authority_pressed"]
+[connection signal="pressed" from="Upgrades/Upgrade1" to="." method="_on_upgrade1_pressed"]
+[connection signal="pressed" from="Upgrades/UpgradePassive" to="." method="_on_upgrade_passive_pressed"]
+[connection signal="pressed" from="Upgrades/Upgrade2" to="." method="_on_upgrade_2_pressed"]
+[connection signal="pressed" from="Upgrades/UpgradeCC" to="." method="_on_upgrade_cc_pressed"]
+[connection signal="pressed" from="Upgrades/UpgradeCM" to="." method="_on_upgrade_cm_pressed"]
+[connection signal="timeout" from="PassiveTimer" to="." method="_on_passive_timer_timeout"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="timeout" from="RumourTimer" to="." method="cycle_rumour"]
+[connection signal="timeout" from="TypewriterTimer" to="." method="_on_typewriter_timer_timeout"]
+[connection signal="pressed" from="PrestigeButton" to="." method="_on_prestige_button_pressed"]
+[connection signal="confirmed" from="PrestigeConfirm" to="." method="_on_prestige_confirm_confirmed"]

@@ -1,0 +1,22 @@
+# Godot-specific folders
+.import/
+.godot/
+
+# OS-specific stuff
+.DS_Store
+Thumbs.db
+
+# Exported builds
+/export/
+*.exe
+*.apk
+*.pck
+*.zip
+
+# Logs
+*.log
+
+# Swap files / backups
+*.tmp
+*.bak
+*.swp
