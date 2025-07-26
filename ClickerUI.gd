@@ -16,9 +16,14 @@ var upgrade_cc_cost = 100
 var upgrade_cm_level = 1
 var upgrade_cm_cost = 100
 
+#away income
+var last_active_time = 0
+var now = 0
+var elapsed = 0
+
 #prestige stuff
 var lifetime_authority: int = 0
-var bloodline_points := 0
+var bloodline_strength := 0
 var bloodline_spent := 0
 
 #crit stuff
@@ -33,34 +38,59 @@ var current_rumour = 0
 var typewriter_text = ""
 var typewriter_index = 0
 
-@onready var rumour_label = $RumourLabel
+@onready var rumour_label = $Rumours/RumourLabel
 @onready var authority_label = $AuthorityLabel
 @onready var get_authority = $GetAuthorityButton
 @onready var upgrade_1 = $Upgrades/Upgrade1
 @onready var upgrade_passive = $Upgrades/UpgradePassive
 @onready var upgrade_2 = $Upgrades/Upgrade2
-@onready var passive_timer = $PassiveTimer
-@onready var passive_label = $PassiveLabel
+@onready var passive_timer = $IdleIncome/PassiveTimer
+@onready var passive_label = $IdleIncome/PassiveLabel
 @onready var upgrade_cc = $Upgrades/UpgradeCC
 @onready var upgrade_cm = $Upgrades/UpgradeCM
-@onready var prestige_button = $PrestigeButton
-@onready var bloodline_label = $BloodlineLabel
-
+@onready var prestige_button = $Bloodline/PrestigeButton
+@onready var bloodline_label = $Bloodline/BloodlineLabel
+@onready var away_income = $AwayIncome
 
 #floating text for click popup
 @onready var floating_text_scene = preload("res://FloatingText.tscn")
 
-# allows passive income to work
+
+
+#navigation
+func _on_main_menu_pressed() -> void:
+	MusicManager.play_sfx(load("res://audio/click.ogg"))
+	last_active_time = Time.get_unix_time_from_system()
+	get_tree().change_scene_to_file("res://mainmenu.tscn")
+func _on_options_pressed() -> void:
+	MusicManager.play_sfx(load("res://audio/click.ogg"))
+	last_active_time = Time.get_unix_time_from_system()
+	get_tree().change_scene_to_file("res://options.tscn")
+
+
 func _on_passive_timer_timeout():
 	if passive_income > 0:
 		authority += passive_income
 		lifetime_authority += passive_income
 		update_ui()
 		update_global_state()
+
+#away income
+
+func calculate_away_income(elapsed: int):
+	return int(elapsed * passive_income / 0.8)
+	
+func away():
+	var now = Time.get_unix_time_from_system()
+	var elapsed = now - last_active_time
+	if elapsed > 0:
+		var passive_income = calculate_away_income(elapsed)
+		authority += passive_income
 	
 	#loads save game
 func _ready():
 	MusicManager.play_music(preload("res://Audio/gamebgm.wav"))
+	
 	Global.load_game()
 	authority = Global.authority
 	authority_per_click = Global.authority_per_click
@@ -72,12 +102,18 @@ func _ready():
 	upgrade_2_level = Global.upgrade_2_level
 	upgrade_2_cost = Global.upgrade_2_cost
 	lifetime_authority = Global.lifetime_authority
-	bloodline_points = Global.bloodline_points
+	bloodline_strength = Global.bloodline_strength
 	bloodline_spent = Global.bloodline_spent
+	
 	load_rumours()
 	cycle_rumour()
-	$RumourTimer.start()
+	$Rumours/RumourTimer.start()
+	
+	#income gained while away
+	away()
+		
 	update_ui()
+	update_global_state()
 
 #runs rumours at bottom of screen
 func load_rumours():
@@ -96,14 +132,14 @@ func cycle_rumour():
 		typewriter_text = rumours[current_rumour]
 		typewriter_index = 0
 		rumour_label.text = ""
-		$TypewriterTimer.start()
+		$Rumours/TypewriterTimer.start()
 #makes rumours appear gradually
 func _on_typewriter_timer_timeout():
 	if typewriter_index < typewriter_text.length():
 		rumour_label.text += typewriter_text[typewriter_index]
 		typewriter_index += 1
 	else:
-		$TypewriterTimer.stop()
+		$Rumours/TypewriterTimer.stop()
 	
 #increments based on click dps
 func _on_get_authority_pressed():
@@ -158,7 +194,7 @@ func show_floating_text(amount_text: String, is_crit: bool):
 
 #makes sure everything updates when it needs to. Call in every function that updates something that needs done.
 func update_ui():
-	authority_label.text = "Absolute Authority: %d" % authority
+	authority_label.text = "Authority: %d" % authority
 	upgrade_1.text = "Tighten Grip (Improve Clicks) – Lv. %d (Cost: %d)" % [upgrade_1_level, upgrade_cost]
 	upgrade_passive.text = "Hire Enforcers (Improve Idle Income) – Lv. %d (Cost: %d)" % [upgrade_passive_level, passive_upgrade_cost]
 	passive_label.text = "Passive Authority: +%d/sec" % passive_income
@@ -179,25 +215,18 @@ func update_ui():
 		upgrade_cm.text = "Brutality (Improve Crit Multiplier) - Lv. %d (Cost: %d)" % [upgrade_cm_level, upgrade_cm_cost]
 	else:
 		upgrade_cm.visible = false
-	$PrestigeButton.visible = Global.lifetime_authority >= 10000
-	bloodline_label.text = "bloodline Points: %d" % bloodline_points
-	$BloodlineLabel.visible = Global.bloodline_points >= 1
+	$Bloodline/PrestigeButton.visible = Global.lifetime_authority >= 10000
+	bloodline_label.text = "Bloodline Strength: %d" % bloodline_strength
+	$Bloodline/BloodlineLabel.visible = Global.bloodline_strength >= 1
 
 #idle timer thing
-@onready var passive_bar = $PassiveBar
+@onready var passive_bar = $IdleIncome/PassiveBar
 func _process(_delta):
 	if passive_income > 0:
 		var elapsed = passive_timer.time_left
 		passive_bar.value = passive_bar.max_value - elapsed
 	else:
 		passive_bar.value = 0
-		
-		
-		
-#goes back to menu
-func _on_back_button_pressed():
-	MusicManager.play_sfx(load("res://audio/click.ogg"))
-	get_tree().change_scene_to_file("res://mainmenu.tscn")
 	
 	
 #makes sure when you leave screen it saves. Also just saves regularly.
@@ -216,8 +245,11 @@ func update_global_state():
 	Global.upgrade_cm_cost = upgrade_cm_cost
 	Global.upgrade_cm_level = upgrade_cm_level
 	Global.lifetime_authority = lifetime_authority
-	Global.bloodline_points = bloodline_points
+	Global.bloodline_strength = bloodline_strength
 	Global.bloodline_spent = bloodline_spent
+	Global.last_active_time = last_active_time
+	Global.elapsed = elapsed
+	Global.now = now
 	Global.save_game()
 
 #upgrades both active and passive
@@ -262,7 +294,7 @@ func _on_upgrade_cm_pressed() -> void:
 func can_prestige() -> bool:
 	return lifetime_authority >= 10000 # requires this much lifetime authority to prestige.
 
-func calculate_bloodline_points() -> int:
+func calculate_bloodline_strength() -> int:
 	return int(lifetime_authority / 10000)  # 1 bloodline per 10k lifetime
 	
 	
@@ -271,12 +303,12 @@ func _on_prestige_button_pressed():
 	if not can_prestige():
 		print("Not enough lifetime authority to prestige.")
 		return
-	$PrestigeConfirm.popup_centered()
+	$Bloodline/PrestigeConfirm.popup_centered()
 func _on_prestige_confirm_confirmed():
 	MusicManager.play_sfx(load("res://audio/click.ogg"))
-	var gained = calculate_bloodline_points()
-	Global.bloodline_points += gained
-	bloodline_points = Global.bloodline_points
+	var gained = calculate_bloodline_strength()
+	Global.bloodline_strength += gained
+	bloodline_strength = Global.bloodline_strength
 	Global.lifetime_authority = 0
 	Global.bloodline_spent = 0
 
@@ -310,3 +342,10 @@ func _on_prestige_confirm_confirmed():
 	upgrade_cm_cost = 1000
 	Global.save_game()
 	get_tree().reload_current_scene()
+
+
+func _on_cheat_pressed() -> void:
+	authority += 1000
+	lifetime_authority += 1000
+	update_ui()
+	update_global_state()

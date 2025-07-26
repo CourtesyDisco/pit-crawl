@@ -6,6 +6,10 @@ var authority = 0
 var authority_per_click = 1
 var passive_income = 0
 
+var last_active_time = 0
+var now = 0
+var elapsed = 0
+
 #upgrade vars
 var passive_upgrade_cost = 50
 var upgrade_1_level = 1
@@ -20,7 +24,7 @@ var upgrade_cm_cost = 100
 
 #prestige vars
 var lifetime_authority: int = 0
-var bloodline_points := 0
+var bloodline_strength := 0
 var bloodline_spent := 0
 
 
@@ -44,8 +48,11 @@ func save_game():
 		"upgrade_cm_level": upgrade_cm_level,
 		"upgrade_cm_cost": upgrade_cm_cost,
 		"lifetime_authority": lifetime_authority,
-		"bloodline_points": bloodline_points,
+		"bloodline_strength": bloodline_strength,
 		"bloodline_spent": bloodline_spent,
+		"now": now,
+		"elapsed": elapsed,
+		"last_active_time": last_active_time,
 	}
 
 	var file = FileAccess.open(save_path, FileAccess.WRITE)
@@ -73,9 +80,11 @@ func load_game():
 		upgrade_cm_level = save_data.get("upgrade_cm_level", 1)
 		upgrade_cm_cost = save_data.get("upgrade_cm_cost", 1000)
 		lifetime_authority = save_data.get("lifetime_authority", 0)
-		bloodline_points = save_data.get("bloodline_points", 0)
+		bloodline_strength = save_data.get("bloodline_strength", 0)
 		bloodline_spent = save_data.get("bloodline_spent", 0)
-
+		now = save_data.get("now", 0)
+		elapsed = save_data.get("elapsed", 0)
+		last_active_time = save_data.get("last_active_time", 0)
 		print("Game loaded!")
 	else:
 		print("No save file found.")

@@ -4,6 +4,9 @@ extends Node
 func _on_back_button_pressed():
 	get_tree().change_scene_to_file("res://mainmenu.tscn")
 	MusicManager.play_sfx(load("res://audio/click.ogg"))
+func _on_back_to_game_pressed():
+	get_tree().change_scene_to_file("res://ClickerUI.tscn")
+	MusicManager.play_sfx(load("res://audio/click.ogg"))
 
 func _on_reset_pressed() -> void:
 	$ResetConfirm.popup_centered()
@@ -28,7 +31,7 @@ func _on_reset_confirm_confirmed():
 	Global.upgrade_cm_level = 1
 	Global.upgrade_cm_cost = 1000
 	Global.lifetime_authority = 0
-	Global.bloodline_points = 0
+	Global.bloodline_strength = 0
 	Global.bloodline_spent = 0
 	
 	Global.save_game()
